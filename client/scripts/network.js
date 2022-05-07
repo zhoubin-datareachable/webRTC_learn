@@ -9,8 +9,14 @@ class ServerConnection {
   constructor() {
     console.log("ServerConnection ==> constructor");
     this._connect();
-    Events.on("beforeunload", (e) => this._disconnect());
-    Events.on("pagehide", (e) => this._disconnect());
+    Events.on("beforeunload", (e) => {
+      console.log("ServerConnection ==> @Event beforeunload");
+      this._disconnect();
+    });
+    Events.on("pagehide", (e) => {
+      console.log("ServerConnection ==> @Event pagehide");
+      this._disconnect();
+    });
     document.addEventListener("visibilitychange", (e) =>
       this._onVisibilityChange()
     );
@@ -23,9 +29,18 @@ class ServerConnection {
     const ws = new WebSocket(this._endpoint());
     ws.binaryType = "arraybuffer";
     ws.onopen = (e) => console.log("WS: server connected");
-    ws.onmessage = (e) => this._onMessage(e.data);
-    ws.onclose = (e) => this._onDisconnect();
-    ws.onerror = (e) => console.error(e);
+    ws.onmessage = (e) => {
+      console.log("ServerConnection ==> @ws onmessage", e.data);
+      this._onMessage(e.data);
+    };
+    ws.onclose = (e) => {
+      console.log("ServerConnection ==> @ws onclose");
+      this._onDisconnect();
+    };
+    ws.onerror = (e) => {
+      console.log("ServerConnection ==> @ws onerror");
+      console.error(e);
+    };
     this._socket = ws;
   }
 

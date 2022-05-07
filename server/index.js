@@ -22,9 +22,9 @@ class SnapdropServer {
   constructor(port) {
     const WebSocket = require("ws");
     this._wss = new WebSocket.Server({ port: port });
-    this._wss.on("connection", (socket, request) =>
-      this._onConnection(new Peer(socket, request))
-    );
+    this._wss.on("connection", (socket, request) => {
+      this._onConnection(new Peer(socket, request));
+    });
     this._wss.on("headers", (headers, response) =>
       this._onHeaders(headers, response)
     );
@@ -35,6 +35,7 @@ class SnapdropServer {
   }
 
   _onConnection(peer) {
+    console.log({ peer });
     this._joinRoom(peer);
     peer.socket.on("message", (message) => this._onMessage(peer, message));
     this._keepAlive(peer);
